@@ -5,23 +5,21 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.github.chengang.albumcloud.R;
-import com.github.chengang.albumcloud.dagger.DaggerActivity;
 import com.github.chengang.albumcloud.dagger.DaggerFragment;
 import com.github.chengang.albumcloud.ui.Config.ConfigFragment;
 import com.github.chengang.albumcloud.ui.dashboard.DashboardFragment;
 import com.github.chengang.albumcloud.ui.home.HomeFragment;
 import com.github.chengang.albumcloud.ui.upload.UploadActivity;
+import com.github.chengang.library.base.BaselibActivity;
 import com.github.chengang.library.utils.ScreenUtil;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 import com.tbruyelle.rxpermissions.RxPermissions;
@@ -31,12 +29,11 @@ import com.zhihu.matisse.engine.impl.GlideEngine;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import butterknife.BindView;
 import rx.Observer;
 
-public class MainActivity extends DaggerActivity implements View.OnClickListener {
+public class MainActivity extends BaselibActivity implements View.OnClickListener {
 
     @BindView(R.id.navigation)
     BottomNavigationViewEx mNavigation;
@@ -72,33 +69,6 @@ public class MainActivity extends DaggerActivity implements View.OnClickListener
                     }
                 }
             };
-
-    @Override
-    protected void initView() {
-        setContentView(R.layout.activity_main);
-
-        //init BottomNavigationView
-        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-        mNavigation.enableAnimation(false);
-        mNavigation.enableShiftingMode(false);
-        mNavigation.enableItemShiftingMode(false);
-        mNavigation.setTextVisibility(false);
-        mNavigation.setItemHeight(ScreenUtil.dp2px(this, 56));
-        mNavigation.setIconsMarginTop(ScreenUtil.dp2px(this, 16));
-
-        mImageViewUpload.setOnClickListener(this);
-    }
-
-    @Override
-    protected void initData() {
-        fragmentList = new LinkedList<>();
-
-        fragmentList.add(new HomeFragment());
-        fragmentList.add(new DashboardFragment());
-        fragmentList.add(new ConfigFragment());
-
-        switchToHome();
-    }
 
     private void switchToHome() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_content, fragmentList.get(0)).commit();
@@ -167,5 +137,35 @@ public class MainActivity extends DaggerActivity implements View.OnClickListener
                 startActivity(uploadIntent);
             }
         }
+    }
+
+    @Override
+    protected int getLayout() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void onViewCreated() {
+        //init BottomNavigationView
+        mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        mNavigation.enableAnimation(false);
+        mNavigation.enableShiftingMode(false);
+        mNavigation.enableItemShiftingMode(false);
+        mNavigation.setTextVisibility(false);
+        mNavigation.setItemHeight(ScreenUtil.dp2px(this, 56));
+        mNavigation.setIconsMarginTop(ScreenUtil.dp2px(this, 16));
+
+        mImageViewUpload.setOnClickListener(this);
+    }
+
+    @Override
+    protected void initEventAndData() {
+        fragmentList = new LinkedList<>();
+
+        fragmentList.add(new HomeFragment());
+        fragmentList.add(new DashboardFragment());
+        fragmentList.add(new ConfigFragment());
+
+        switchToHome();
     }
 }
